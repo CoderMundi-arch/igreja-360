@@ -1,0 +1,8 @@
+/* Lightweight effects: progressive enhancement; no animation dependency. */
+(()=>{'use strict';const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');const sections=[...document.querySelectorAll('[data-reveal]')];if(reduced.matches||!('IntersectionObserver'in window)){return;}
+const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}})},{threshold:0.12,rootMargin:'0px 0px -25px 0px'});
+sections.forEach(element=>{element.classList.add('motion-ready');observer.observe(element)});
+const art=document.querySelector('[data-parallax]');if(!art)return;
+let ticking=false;const update=()=>{ticking=false;if(reduced.matches||window.innerWidth<751){art.style.setProperty('--parallax-y','0px');return;}const rect=art.getBoundingClientRect();if(rect.bottom<0||rect.top>innerHeight)return;const center=rect.top+rect.height/2;const shift=Math.max(-12,Math.min(12,(innerHeight/2-center)*.028));art.style.setProperty('--parallax-y',shift.toFixed(1)+'px')};
+const request=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
+window.addEventListener('scroll',request,{passive:true});window.addEventListener('resize',request,{passive:true});reduced.addEventListener?.('change',()=>{if(reduced.matches){sections.forEach(el=>el.classList.add('is-visible'));art.style.setProperty('--parallax-y','0px')}else{request()} });request();})();
